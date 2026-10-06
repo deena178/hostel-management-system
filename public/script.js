@@ -10,6 +10,18 @@
 
 let currentUser = null;
 let authToken = localStorage.getItem("hmsToken");
+let isDemoMode = false;
+
+const staticDemoUsers = [
+    { username: "admin", password: "Admin@123", name: "Administrator", role: "Admin" },
+    { username: "warden", password: "Warden@123", name: "Main Warden", role: "Warden" },
+    { username: "student1", password: "Student@123", name: "Arun Kumar", role: "Student" }
+];
+
+function supportsStaticDemoLogin() {
+    return !window.HOSTEL_API_BASE_URL
+        && (location.protocol === "file:" || location.hostname.endsWith("github.io"));
+}
 
 let currentPage = "dashboard";
 
@@ -688,6 +700,24 @@ document
                     .value;
 
             try {
+                if (supportsStaticDemoLogin()) {
+                    const account = staticDemoUsers.find(user =>
+                        user.username === username.toLowerCase() && user.password === password
+                    );
+                    if (!account) throw new Error("Invalid demo username or password.");
+
+                    isDemoMode = true;
+                    currentUser = {
+                        username: account.username,
+                        name: account.name,
+                        role: account.role
+                    };
+                    sessionStorage.setItem("hmsDemoUser", account.username);
+                    await showApplication();
+                    showToast("Demo login successful. Changes are not saved.", "success");
+                    return;
+                }
+
                 const result = await api("/api/auth/login", {
                     method: "POST",
                     body: JSON.stringify({ username, password })
@@ -777,6 +807,11 @@ async function showApplication() {
 
     updateDate();
 
+    if (isDemoMode) {
+        loadDashboard();
+        return;
+    }
+
     try {
         const result = await api("/api/data");
         data = result.data;
@@ -796,7 +831,9 @@ async function showApplication() {
 function logout() {
 
     localStorage.removeItem("hmsToken");
+    sessionStorage.removeItem("hmsDemoUser");
     authToken = null;
+    isDemoMode = false;
 
     currentUser = null;
 
@@ -1024,7 +1061,7 @@ function loadDashboard() {
 
 
     loadRecentActivities();
-    if (currentUser && currentUser.role !== "Student") loadAiInsights();
+    if (!isDemoMode && currentUser && currentUser.role !== "Student") loadAiInsights();
 
 }
 
@@ -2417,7 +2454,20 @@ document.addEventListener(
     "DOMContentLoaded",
     function () {
 
-        if (authToken) {
+        const demoUsername = sessionStorage.getItem("hmsDemoUser");
+        const demoAccount = supportsStaticDemoLogin()
+            ? staticDemoUsers.find(user => user.username === demoUsername)
+            : null;
+
+        if (demoAccount) {
+            isDemoMode = true;
+            currentUser = {
+                username: demoAccount.username,
+                name: demoAccount.name,
+                role: demoAccount.role
+            };
+            showApplication();
+        } else if (authToken) {
             api("/api/auth/me")
                 .then(async result => {
                     currentUser = result.user;
@@ -2443,6 +2493,19 @@ async function api(
     options = {}
 ) {
 
+    if (isDemoMode) {
+        throw new Error("This is a static demo. Connect a backend to load or save live hostel records.");
+    }
+
+    const apiBaseUrl = String(window.HOSTEL_API_BASE_URL || "").trim().replace(/\/+$/, "");
+    if (!apiBaseUrl && location.hostname.endsWith("github.io")) {
+        throw new Error("The backend URL is not configured. Set HOSTEL_API_BASE_URL in config.js to your deployed backend URL.");
+    }
+
+    const requestUrl = apiBaseUrl
+        ? `${apiBaseUrl}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`
+        : endpoint;
+
     const defaultOptions = {
 
         headers: {
@@ -2455,9 +2518,10 @@ async function api(
     };
 
 
-    const response =
-        await fetch(
-            endpoint,
+    let response;
+    try {
+        response = await fetch(
+            requestUrl,
             {
                 ...defaultOptions,
                 ...options,
@@ -2468,6 +2532,12 @@ async function api(
                 }
             }
         );
+    } catch (error) {
+        if (error instanceof TypeError) {
+            throw new Error("Could not reach the backend. Check its URL, confirm the service is running, and allow this GitHub Pages origin in its CORS settings.");
+        }
+        throw error;
+    }
 
 
     const contentType =
@@ -2487,7 +2557,10 @@ async function api(
     if (!response.ok) {
 
         if (response.status === 401) logout();
-        throw new Error(result.error || "Request failed");
+        const errorMessage = typeof result === "object" && result !== null
+            ? result.error
+            : null;
+        throw new Error(errorMessage || `Request failed (${response.status} ${response.statusText}). Check the backend URL and deployment settings.`);
 
     }
 

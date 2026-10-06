@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const helmet = require("helmet");
+const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 const mongoose = require("mongoose");
 const HostelRecord = require("./models/HostelRecord");
@@ -21,6 +22,10 @@ const JWT_SECRET = process.env.JWT_SECRET || (IS_PRODUCTION ? "" : randomBytes(3
 const MODULES = ["students", "rooms", "allocation", "fees", "mess", "visitors", "complaints", "leave"];
 const DAYS_OF_WEEK = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
 const MEAL_TYPES = ["breakfast", "lunch", "snacks", "dinner"];
+const FRONTEND_ORIGINS = (process.env.FRONTEND_ORIGIN || "")
+    .split(",")
+    .map(origin => origin.trim())
+    .filter(Boolean);
 
 if (!MONGODB_URI) throw new Error("MONGODB_URI must be configured in production.");
 if (!JWT_SECRET) throw new Error("JWT_SECRET must be configured in production.");
@@ -215,6 +220,12 @@ const users = IS_PRODUCTION ? [
 ] : demoUsers;
 
 app.use(helmet({ contentSecurityPolicy: false }));
+app.use(cors({
+    origin(origin, callback) {
+        callback(null, !origin || FRONTEND_ORIGINS.includes(origin));
+    },
+    credentials: true
+}));
 app.use(express.json({ limit: "32kb" }));
 app.use(express.static(path.join(__dirname, "public")));
 

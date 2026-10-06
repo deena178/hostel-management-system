@@ -13,6 +13,8 @@ services:
         generateValue: true
       - key: MONGODB_URI
         sync: false
+      - key: FRONTEND_ORIGIN
+        value: https://deena178.github.io
       - key: HOSTEL_ADMIN_USERNAME
         sync: false
       - key: HOSTEL_ADMIN_PASSWORD
