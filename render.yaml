@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: hostelhub
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MONGODB_URI
+        sync: false
+      - key: HOSTEL_ADMIN_USERNAME
+        sync: false
+      - key: HOSTEL_ADMIN_PASSWORD
+        sync: false
+      - key: HOSTEL_WARDEN_USERNAME
+        sync: false
+      - key: HOSTEL_WARDEN_PASSWORD
+        sync: false
+      - key: HOSTEL_STUDENT_USERNAME
+        sync: false
+      - key: HOSTEL_STUDENT_PASSWORD
+        sync: false

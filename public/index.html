@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hostel Management System</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- ================= LOGIN ================= -->
+
+<section id="loginPage" class="login-page">
+
+    <div class="login-container">
+
+        <div class="login-brand">
+            <div class="brand-icon">
+                <i class="bi bi-building"></i>
+            </div>
+
+            <h1>Hostel<span></span></h1>
+            <p>Hostel Management System</p>
+        </div>
+
+        <div class="login-card">
+
+            <h3>Welcome Back</h3>
+            <p class="login-subtitle">
+                Sign in to manage your hostel
+            </p>
+
+            <form id="loginForm">
+
+                <div class="form-group">
+                    <label>Username</label>
+
+                    <div class="input-icon">
+                        <i class="bi bi-person"></i>
+
+                        <input
+                            type="text"
+                            id="username"
+                            placeholder="Enter username"
+                            required
+                        >
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Password</label>
+
+                    <div class="input-icon">
+                        <i class="bi bi-lock"></i>
+
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Enter password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            onclick="togglePassword()"
+                        >
+                            <i class="bi bi-eye" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                </div>
+                <button class="login-btn" type="submit">
+
+                    <i class="bi bi-box-arrow-in-right"></i>
+
+                    Sign In
+
+                </button>
+
+            </form>
+
+
+            <div class="demo-login">
+
+                <strong>Demo Credentials</strong>
+
+                <p>
+                    Admin:
+                    <b>admin / Admin@123</b>
+                </p>
+
+                <p>
+                    Warden:
+                    <b>warden / Warden@123</b>
+                </p>
+
+                <p>
+                    Student:
+                    <b>student1 / Student@123</b>
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= APPLICATION ================= -->
+
+<section id="appPage" class="app-page d-none">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="sidebar-brand">
+
+            <div class="brand-small">
+                <i class="bi bi-building"></i>
+            </div>
+
+            <div>
+                <strong>Hostel</strong>
+                <small>Management System</small>
+            </div>
+
+        </div>
+
+
+        <div class="user-profile">
+
+            <div class="user-avatar">
+                <i class="bi bi-person"></i>
+            </div>
+
+            <div>
+                <strong id="loggedUser">
+                    Admin
+                </strong>
+
+                <small id="loggedRole">
+                    Administrator
+                </small>
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <p class="nav-heading">
+                MAIN
+            </p>
+
+            <a
+                href="#"
+                class="nav-link active"
+                data-page="dashboard"
+            >
+                <i class="bi bi-grid-1x2-fill"></i>
+                Dashboard
+            </a>
+
+
+            <p class="nav-heading">
+                MANAGEMENT
+            </p>
+
+            <a
+                href="#"
+                class="nav-link"
+                data-page="students"
+            >
+                <i class="bi bi-people-fill"></i>
+                Students
+            </a>
+
+            <a
+                href="#"
+                class="nav-link"
+                data-page="rooms"
+            >
+                <i class="bi bi-door-open-fill"></i>
+                Rooms
+            </a>
+
+            <a
+                href="#"
+                class="nav-link"
+                data-page="allocation"
+            >
+                <i class="bi bi-arrow-left-right"></i>
+                Room Allocation
+            </a>
+
+            <a
+                href="#"
+                class="nav-link"
+                data-page="fees"
+            >
+                <i class="bi bi-cash-stack"></i>
+                Fees
+            </a>
+
+
+            <p class="nav-heading">
+                HOSTEL
+            </p>
+
+            <a
+                href="#"
+                class="nav-link"
+                data-page="mess"
+            >
+                <i class="bi bi-cup-hot-fill"></i>
+                Mess Management
+            </a>
+
+            <a
+                href="#"
+                class="nav-link"
+                data-page="visitors"
+            >
+                <i class="bi bi-person-vcard-fill"></i>
+                Visitors
+            </a>
+
+            <a
+                href="#"
+                class="nav-link"
+                data-page="complaints"
+            >
+                <i class="bi bi-tools"></i>
+                Complaints
+            </a>
+
+            <a
+                href="#"
+                class="nav-link"
+                data-page="leave"
+            >
+                <i class="bi bi-calendar-check-fill"></i>
+                Leave / Out-pass
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <button
+                class="logout-btn"
+                onclick="logout()"
+            >
+                <i class="bi bi-box-arrow-left"></i>
+                Logout
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <button
+                class="mobile-menu"
+                onclick="toggleSidebar()"
+            >
+                <i class="bi bi-list"></i>
+            </button>
+
+
+            <div class="topbar-title">
+
+                <h2 id="pageTitle">
+                    Dashboard
+                </h2>
+
+                <span id="currentDate"></span>
+
+            </div>
+
+
+            <div class="topbar-actions">
+
+                <button class="icon-btn">
+                    <i class="bi bi-bell"></i>
+                    <span class="notification-dot"></span>
+                </button>
+
+                <div class="top-user">
+
+                    <div class="top-avatar">
+                        <i class="bi bi-person"></i>
+                    </div>
+
+                    <span id="topUsername">
+                        Admin
+                    </span>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <div class="content-area">
+
+
+            <!-- DASHBOARD -->
+
+            <div id="dashboardPage" class="page-content">
+
+                <div class="welcome-box">
+
+                    <div>
+
+                        <h3>
+                            Good Morning,
+                            <span id="welcomeName">
+                                Admin
+                            </span> 👋
+                        </h3>
+
+                        <p>
+                            Here's what's happening in your hostel today.
+                        </p>
+
+                    </div>
+
+                    <i class="bi bi-building-fill"></i>
+
+                </div>
+
+
+                <div class="stats-grid">
+
+                    <div class="stat-card blue">
+
+                        <div class="stat-icon">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+
+                        <div>
+                            <span>Total Students</span>
+                            <strong id="totalStudents">0</strong>
+                            <small>Registered residents</small>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card purple">
+
+                        <div class="stat-icon">
+                            <i class="bi bi-door-open-fill"></i>
+                        </div>
+
+                        <div>
+                            <span>Total Rooms</span>
+                            <strong id="totalRooms">0</strong>
+                            <small>Available rooms</small>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card green">
+
+                        <div class="stat-icon">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+
+                        <div>
+                            <span>Occupied Rooms</span>
+                            <strong id="occupiedRooms">0</strong>
+                            <small>Currently occupied</small>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card orange">
+
+                        <div class="stat-icon">
+                            <i class="bi bi-wallet2"></i>
+                        </div>
+
+                        <div>
+                            <span>Pending Fees</span>
+                            <strong id="pendingFees">
+                                ₹0
+                            </strong>
+                            <small>Outstanding amount</small>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-grid">
+
+
+                    <div class="dashboard-card">
+
+                        <div class="card-header">
+
+                            <div>
+                                <h4>Room Occupancy</h4>
+                                <span>Current hostel capacity</span>
+                            </div>
+
+                            <i class="bi bi-pie-chart-fill"></i>
+
+                        </div>
+
+
+                        <div class="occupancy-container">
+
+                            <div class="progress-circle">
+
+                                <div>
+                                    <strong id="occupancyPercent">
+                                        0%
+                                    </strong>
+
+                                    <span>
+                                        Occupied
+                                    </span>
+                                </div>
+
+                            </div>
+
+
+                            <div class="occupancy-info">
+
+                                <div>
+                                    <span class="dot occupied"></span>
+                                    Occupied
+                                    <strong id="occupiedCount">
+                                        0
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span class="dot vacant"></span>
+                                    Vacant
+                                    <strong id="vacantCount">
+                                        0
+                                    </strong>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="dashboard-card">
+
+                        <div class="card-header">
+
+                            <div>
+                                <h4>Pending Actions</h4>
+                                <span>Needs your attention</span>
+                            </div>
+
+                            <i class="bi bi-exclamation-circle-fill"></i>
+
+                        </div>
+
+
+                        <div class="action-list">
+
+                            <div class="action-item">
+
+                                <div class="action-icon red">
+                                    <i class="bi bi-tools"></i>
+                                </div>
+
+                                <div>
+                                    <strong>Open Complaints</strong>
+                                    <small>
+                                        Maintenance requests
+                                    </small>
+                                </div>
+
+                                <b id="openComplaints">
+                                    0
+                                </b>
+
+                            </div>
+
+
+                            <div class="action-item">
+
+                                <div class="action-icon yellow">
+                                    <i class="bi bi-calendar-event"></i>
+                                </div>
+
+                                <div>
+                                    <strong>Leave Requests</strong>
+                                    <small>
+                                        Waiting for approval
+                                    </small>
+                                </div>
+
+                                <b id="pendingLeaves">
+                                    0
+                                </b>
+
+                            </div>
+
+
+                            <div class="action-item">
+
+                                <div class="action-icon blue">
+                                    <i class="bi bi-cash"></i>
+                                </div>
+
+                                <div>
+                                    <strong>Fee Dues</strong>
+                                    <small>
+                                        Students with pending fees
+                                    </small>
+                                </div>
+
+                                <b id="feeDues">
+                                    0
+                                </b>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-card ai-panel">
+                    <div class="card-header">
+                        <div>
+                            <h4><i class="bi bi-stars"></i> Hostel Intelligence</h4>
+                            <span id="aiModeLabel">Operational insights</span>
+                        </div>
+                        <button class="secondary-btn" type="button" onclick="loadAiInsights()">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh
+                        </button>
+                    </div>
+                    <div id="aiInsights" class="ai-insights" aria-live="polite">
+                        Sign in to generate recommendations from current hostel activity.
+                    </div>
+                    <form id="aiQuestionForm" class="ai-question-form">
+                        <input id="aiQuestion" type="text" maxlength="500" placeholder="Ask about occupancy, fees, complaints or leave" aria-label="Ask the hostel assistant">
+                        <button class="primary-btn" type="submit" aria-label="Ask assistant"><i class="bi bi-send"></i></button>
+                    </form>
+                    <div id="aiAnswer" class="ai-answer" aria-live="polite"></div>
+                </div>
+
+                <div class="dashboard-card">
+
+                    <div class="card-header">
+
+                        <div>
+                            <h4>Recent Activities</h4>
+                            <span>Latest hostel activities</span>
+                        </div>
+
+                    </div>
+
+                    <div id="recentActivities"></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- GENERIC MODULE PAGE -->
+
+            <div
+                id="modulePage"
+                class="page-content d-none"
+            >
+
+                <div class="module-toolbar">
+
+                    <div>
+
+                        <h3 id="moduleHeading">
+                            Students
+                        </h3>
+
+                        <p id="moduleDescription">
+                            Manage hostel records
+                        </p>
+
+                    </div>
+
+                    <button
+                        class="primary-btn"
+                        id="addButton"
+                        onclick="openAddModal()"
+                    >
+                        <i class="bi bi-plus-lg"></i>
+                        Add New
+                    </button>
+
+                </div>
+
+
+                <section id="studentMealPanel" class="meal-panel d-none" aria-labelledby="studentMealHeading">
+                    <div class="meal-panel-heading">
+                        <div>
+                            <h3 id="studentMealHeading">Weekly meal selections</h3>
+                            <p>Choose dishes for each day of the week.</p>
+                        </div>
+                    </div>
+                    <div id="studentMealDays" class="meal-days" aria-live="polite"></div>
+                    <div class="weekly-menu-actions student-meal-actions">
+                        <span id="studentMealStatus" aria-live="polite"></span>
+                        <button id="saveStudentMealWeek" class="primary-btn" type="button" onclick="saveStudentMealWeek()">
+                            <i class="bi bi-check-lg"></i> Save my selections
+                        </button>
+                    </div>
+                </section>
+
+                <section id="mealDemandPanel" class="meal-panel d-none" aria-labelledby="mealDemandHeading">
+                    <div class="meal-panel-heading">
+                        <div>
+                            <h3 id="mealDemandHeading">Kitchen meal counts</h3>
+                            <p>Daily meal counts for kitchen planning.</p>
+                        </div>
+                        <button class="secondary-btn" type="button" onclick="loadMealDemand()" aria-label="Refresh meal counts">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="meal-demand-toolbar">
+                        <label>
+                            <span>Weekday</span>
+                            <select id="mealDemandDayFilter" onchange="renderMealDemand()">
+                                <option value="">All days</option>
+                                <option value="SUNDAY">Sunday</option>
+                                <option value="MONDAY">Monday</option>
+                                <option value="TUESDAY">Tuesday</option>
+                                <option value="WEDNESDAY">Wednesday</option>
+                                <option value="THURSDAY">Thursday</option>
+                                <option value="FRIDAY">Friday</option>
+                                <option value="SATURDAY">Saturday</option>
+                            </select>
+                        </label>
+                        <label class="meal-demand-search">
+                            <span>Find dish</span>
+                            <input id="mealDemandSearch" type="search" placeholder="Search menu dishes" oninput="renderMealDemand()">
+                        </label>
+                        <label class="meal-demand-buffer">
+                            <span>Prep buffer (%)</span>
+                            <input id="mealDemandBuffer" type="number" min="0" max="100" step="5" value="10" oninput="renderMealDemand()">
+                        </label>
+                        <div class="meal-demand-actions">
+                            <button class="secondary-btn" type="button" onclick="exportMealDemandCsv()" aria-label="Export kitchen counts as CSV">
+                                <i class="bi bi-download"></i> Export CSV
+                            </button>
+                            <button class="secondary-btn" type="button" onclick="printMealDemand()" aria-label="Print kitchen prep sheet">
+                                <i class="bi bi-printer"></i> Print
+                            </button>
+                        </div>
+                    </div>
+                    <p id="mealDemandSummary" class="meal-demand-summary" aria-live="polite"></p>
+                    <div id="mealDemandContent" class="meal-demand-content" aria-live="polite"></div>
+                </section>
+
+                <section id="weeklyMenuPanel" class="meal-panel d-none" aria-labelledby="weeklyMenuHeading">
+                    <div class="meal-panel-heading">
+                        <div>
+                            <h3 id="weeklyMenuHeading">Recurring weekly menu</h3>
+                            <p>Maintain the dishes available each day. Enter one dish per line.</p>
+                        </div>
+                    </div>
+                    <div id="weeklyMenuDays" class="weekly-menu-days"></div>
+                    <div class="weekly-menu-actions">
+                        <span id="weeklyMenuStatus" aria-live="polite"></span>
+                        <button id="publishWeeklyMenu" class="primary-btn" type="button" onclick="saveWeeklyMenu()">
+                            <i class="bi bi-calendar2-check"></i> Save weekly menu
+                        </button>
+                    </div>
+                </section>
+
+                <div class="table-card" id="recordTableCard">
+
+                    <div class="table-toolbar">
+
+                        <div class="search-box">
+
+                            <i class="bi bi-search"></i>
+
+                            <input
+                                type="text"
+                                id="searchInput"
+                                placeholder="Search..."
+                                oninput="searchTable()"
+                            >
+
+                        </div>
+
+
+                        <select
+                            id="filterSelect"
+                            onchange="filterTable()"
+                        >
+                            <option value="">
+                                All
+                            </option>
+                        </select>
+
+                    </div>
+
+
+                    <div class="table-responsive">
+
+                        <table class="data-table">
+
+                            <thead id="tableHead"></thead>
+
+                            <tbody id="tableBody"></tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <div class="table-footer">
+
+                        <span id="tableCount">
+                            Showing 0 records
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</section>
+
+
+<!-- ================= MODAL ================= -->
+
+<div
+    class="modal fade"
+    id="dataModal"
+    tabindex="-1"
+>
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5
+                    class="modal-title"
+                    id="modalTitle"
+                >
+                    Add Record
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                ></button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <form
+                    id="dataForm"
+                    class="form-grid"
+                ></form>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    class="secondary-btn"
+                    data-bs-dismiss="modal"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    class="primary-btn"
+                    onclick="saveRecord()"
+                >
+                    <i class="bi bi-check-lg"></i>
+                    Save
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= TOAST ================= -->
+
+<div
+    class="toast-container position-fixed bottom-0 end-0 p-4"
+    id="toastContainer"
+></div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="script.js"></script>
+
+</body>
+</html>

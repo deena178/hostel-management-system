@@ -1,0 +1,4 @@
+node_modules/
+data/hostel.json
+.env*
+!.env.example
